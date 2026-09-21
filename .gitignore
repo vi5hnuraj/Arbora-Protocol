@@ -1,0 +1,51 @@
+# Data files (CSVs from Allium Explorer — too large for git)
+backend/data/raw/*.csv
+backend/data/raw/*.parquet
+backend/data/processed/*.csv
+backend/data/processed/*.parquet
+backend/data/processed/*.pkl
+data/raw/*.csv
+data/processed/*.csv
+
+# Trained model artifact — UN-GITIGNORED for hackathon deployment
+# model/model.pkl
+
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Foundry
+# contracts/lib is committed as forge-install submodules so a fresh clone builds.
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Internal preparation docs (not submission materials)
+docs/pitch_narrative.md
+docs/demo_script.md
+
+# Claude Code (development tool config, not part of the project)
+.claude/
+CLAUDE.md
+
+
+# IDE
+.vscode/
+.idea/
