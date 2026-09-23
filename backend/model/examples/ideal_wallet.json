@@ -1,0 +1,14 @@
+{
+  "_comment": "Minimal-exposure safe wallet: borrowed once, balanced repayment, small stablecoin-heavy portfolio, established crosschain presence",
+  "lending_active_days": 1,
+  "borrow_repay_ratio": 1.0,
+  "repay_count": 1,
+  "unique_borrow_tokens": 1,
+  "current_total_usd": 800.0,
+  "stablecoin_ratio": 0.75,
+  "crosschain_total_tx_count": 0,
+  "crosschain_dex_trade_count": 150,
+  "chains_active_on": 0,
+  "has_used_bridge": 1,
+  "net_flow_usd_90d": 300.0
+}

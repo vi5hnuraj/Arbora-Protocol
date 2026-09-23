@@ -1,0 +1,14 @@
+{
+  "_comment": "Genuinely risky wallet: heavy lending user with bad repayment, over-repay cycling pattern, no stables, depleting portfolio, no crosschain activity",
+  "lending_active_days": 50,
+  "borrow_repay_ratio": 2.5,
+  "repay_count": 40,
+  "unique_borrow_tokens": 4,
+  "current_total_usd": 5000.0,
+  "stablecoin_ratio": 0.0,
+  "crosschain_total_tx_count": 0,
+  "crosschain_dex_trade_count": 0,
+  "chains_active_on": 2,
+  "has_used_bridge": 0,
+  "net_flow_usd_90d": -2000.0
+}

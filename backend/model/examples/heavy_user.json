@@ -1,0 +1,14 @@
+{
+  "_comment": "Heavy Arbitrum lending user: 30 active days, balanced repayment, sophisticated. Model marks heavy-exposure wallets as moderate risk regardless of repayment behavior.",
+  "lending_active_days": 30,
+  "borrow_repay_ratio": 1.0,
+  "repay_count": 15,
+  "unique_borrow_tokens": 3,
+  "current_total_usd": 2500.0,
+  "stablecoin_ratio": 0.7,
+  "crosschain_total_tx_count": 500,
+  "crosschain_dex_trade_count": 200,
+  "chains_active_on": 2,
+  "has_used_bridge": 1,
+  "net_flow_usd_90d": 500.0
+}
