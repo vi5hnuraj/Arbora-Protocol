@@ -1,0 +1,350 @@
+{
+  "model_type": "LogisticRegression (FICO-style scorecard)",
+  "regularization": "L2 (C=1.0)",
+  "class_weight": "balanced",
+  "cv": "5-fold stratified",
+  "target": "P(not liquidated) scaled 0-100 as credit score",
+  "training_samples": 115687,
+  "positive_class_rate": 0.8626552680940814,
+  "n_feature_columns": 24,
+  "metrics": {
+    "auc": 0.8181872350364743,
+    "precision": 0.9508055882314067,
+    "recall": 0.7208260686586906,
+    "f1": 0.8199957824424218
+  },
+  "intercept": 0.6724292056726922,
+  "feature_specs": {
+    "repay_count": {
+      "type": "continuous_binned",
+      "bin_edges": [
+        "-Infinity",
+        3,
+        9,
+        "Infinity"
+      ],
+      "bin_labels": [
+        "[0, 3]",
+        "[4, 9]",
+        "[10, inf)"
+      ],
+      "reference_bin_idx": 0,
+      "description": "Arbitrum lending repay count (Aave v3 / Radiant)"
+    },
+    "borrow_repay_ratio": {
+      "type": "continuous_binned",
+      "bin_edges": [
+        "-Infinity",
+        0.9,
+        1.1,
+        2.0,
+        "Infinity"
+      ],
+      "bin_labels": [
+        "[0, 0.9]",
+        "(0.9, 1.1]",
+        "(1.1, 2.0]",
+        "(2.0, inf)"
+      ],
+      "reference_bin_idx": 1,
+      "description": "Repay/borrow ratio (1 = balanced)"
+    },
+    "unique_borrow_tokens": {
+      "type": "continuous_binned",
+      "bin_edges": [
+        "-Infinity",
+        1,
+        2,
+        "Infinity"
+      ],
+      "bin_labels": [
+        "[1, 1]",
+        "[2, 2]",
+        "[3, inf)"
+      ],
+      "reference_bin_idx": 0,
+      "description": "Distinct tokens borrowed on Arbitrum"
+    },
+    "lending_active_days": {
+      "type": "continuous_binned",
+      "bin_edges": [
+        "-Infinity",
+        1,
+        4,
+        14,
+        "Infinity"
+      ],
+      "bin_labels": [
+        "[1, 1]",
+        "[2, 4]",
+        "[5, 14]",
+        "[15, inf)"
+      ],
+      "reference_bin_idx": 0,
+      "description": "Days with active Arbitrum lending interactions"
+    },
+    "current_total_usd": {
+      "type": "continuous_binned",
+      "bin_edges": [
+        "-Infinity",
+        10,
+        100,
+        1000,
+        "Infinity"
+      ],
+      "bin_labels": [
+        "[0, 10]",
+        "(10, 100]",
+        "(100, 1000]",
+        "(1000, inf)"
+      ],
+      "reference_bin_idx": 0,
+      "description": "Current Arbitrum portfolio value USD"
+    },
+    "stablecoin_ratio": {
+      "type": "continuous_binned",
+      "bin_edges": [
+        "-Infinity",
+        0.05,
+        0.5,
+        "Infinity"
+      ],
+      "bin_labels": [
+        "[0, 0.05]",
+        "(0.05, 0.5]",
+        "(0.5, 1.0]"
+      ],
+      "reference_bin_idx": 2,
+      "description": "Stablecoins as fraction of portfolio"
+    },
+    "crosschain_total_tx_count": {
+      "type": "continuous_binned",
+      "bin_edges": [
+        "-Infinity",
+        0,
+        100,
+        1000,
+        "Infinity"
+      ],
+      "bin_labels": [
+        "[0, 0]",
+        "[1, 100]",
+        "[101, 1000]",
+        "[1001, inf)"
+      ],
+      "reference_bin_idx": 0,
+      "description": "Total multichain transactions across ETH/ARB/POLY/OP/BASE"
+    },
+    "crosschain_dex_trade_count": {
+      "type": "continuous_binned",
+      "bin_edges": [
+        "-Infinity",
+        0,
+        100,
+        "Infinity"
+      ],
+      "bin_labels": [
+        "[0, 0]",
+        "[1, 100]",
+        "[101, inf)"
+      ],
+      "reference_bin_idx": 0,
+      "description": "Multichain DEX trade count (Camelot/Uniswap/Curve)"
+    },
+    "chains_active_on": {
+      "type": "small_int_grouped",
+      "groups": {
+        "0": [
+          0
+        ],
+        "1-3": [
+          1,
+          2,
+          3
+        ],
+        "4": [
+          4
+        ]
+      },
+      "reference_group": "0",
+      "description": "EVM chains with active history"
+    },
+    "has_used_bridge": {
+      "type": "boolean",
+      "description": "Has used a cross-chain bridge"
+    },
+    "net_flow_direction": {
+      "type": "boolean",
+      "description": "Accumulating (1) or depleting (0) over 90d"
+    }
+  },
+  "feature_display_names": {
+    "lending_active_days": "Borrowing protocol activity (days)",
+    "borrow_repay_ratio": "Repayment consistency ratio",
+    "repay_count": "Loan repayment count",
+    "unique_borrow_tokens": "Distinct assets borrowed",
+    "current_total_usd": "Portfolio value (USD)",
+    "stablecoin_ratio": "Stablecoin allocation",
+    "crosschain_total_tx_count": "Cross-chain transaction volume",
+    "crosschain_dex_trade_count": "Cross-chain DEX activity",
+    "chains_active_on": "Blockchain networks used",
+    "has_used_bridge": "Cross-chain bridge experience",
+    "net_flow_direction": "Recent accumulation trend"
+  },
+  "feature_columns": [
+    "repay_count__[4, 9]",
+    "repay_count__[10, inf)",
+    "borrow_repay_ratio__[0, 0.9]",
+    "borrow_repay_ratio__(1.1, 2.0]",
+    "borrow_repay_ratio__(2.0, inf)",
+    "unique_borrow_tokens__[2, 2]",
+    "unique_borrow_tokens__[3, inf)",
+    "lending_active_days__[2, 4]",
+    "lending_active_days__[5, 14]",
+    "lending_active_days__[15, inf)",
+    "current_total_usd__(10, 100]",
+    "current_total_usd__(100, 1000]",
+    "current_total_usd__(1000, inf)",
+    "stablecoin_ratio__[0, 0.05]",
+    "stablecoin_ratio__(0.05, 0.5]",
+    "crosschain_total_tx_count__[1, 100]",
+    "crosschain_total_tx_count__[101, 1000]",
+    "crosschain_total_tx_count__[1001, inf)",
+    "crosschain_dex_trade_count__[1, 100]",
+    "crosschain_dex_trade_count__[101, inf)",
+    "chains_active_on__1-3",
+    "chains_active_on__4",
+    "has_used_bridge",
+    "net_flow_direction"
+  ],
+  "coefficients": {
+    "lending_active_days__[15, inf)": -1.2259576627641224,
+    "lending_active_days__[5, 14]": -1.0535916207742095,
+    "lending_active_days__[2, 4]": -0.8023883847915488,
+    "borrow_repay_ratio__(2.0, inf)": -0.5977005028362067,
+    "borrow_repay_ratio__(1.1, 2.0]": -0.5355946700415823,
+    "stablecoin_ratio__[0, 0.05]": -0.26321879042212554,
+    "borrow_repay_ratio__[0, 0.9]": -0.2501549586094764,
+    "net_flow_direction": 0.2248935026474616,
+    "stablecoin_ratio__(0.05, 0.5]": -0.17247210187716547,
+    "current_total_usd__(100, 1000]": -0.168083854579058,
+    "has_used_bridge": 0.1439740762514153,
+    "current_total_usd__(1000, inf)": -0.1106336221710718,
+    "crosschain_dex_trade_count__[101, inf)": -0.07883222589861795,
+    "current_total_usd__(10, 100]": -0.07504181164178186,
+    "chains_active_on__4": 0.06744831123283092,
+    "crosschain_dex_trade_count__[1, 100]": -0.06165685985766008,
+    "unique_borrow_tokens__[3, inf)": -0.05720691838333556,
+    "repay_count__[10, inf)": 0.0421520952583896,
+    "crosschain_total_tx_count__[1001, inf)": 0.029763612501870793,
+    "repay_count__[4, 9]": 0.022137834032844493,
+    "crosschain_total_tx_count__[1, 100]": 0.02100249511802698,
+    "unique_borrow_tokens__[2, 2]": -0.015624360554826995,
+    "crosschain_total_tx_count__[101, 1000]": 0.011791731047212584,
+    "chains_active_on__1-3": -0.0031575196787035726
+  },
+  "scaler_mean": [
+    0.23835003068624824,
+    0.20631531632767727,
+    0.19944332552490773,
+    0.27588233768703485,
+    0.06977447768547893,
+    0.1507170209271569,
+    0.15894612186330356,
+    0.4086198103503419,
+    0.23891189156949355,
+    0.14706924719285658,
+    0.2610232783285935,
+    0.15943883063784176,
+    0.09572380647782379,
+    0.7440421136342026,
+    0.11421335154338863,
+    0.35669522072488696,
+    0.2054595589824267,
+    0.09899988762782336,
+    0.33350333226723833,
+    0.18027090338586013,
+    0.4918789492337082,
+    0.16927571810142886,
+    0.4386577575699949,
+    0.18115259277187584
+  ],
+  "scaler_scale": [
+    0.4260742817374838,
+    0.4046594946078588,
+    0.3995818882638119,
+    0.4469577982755998,
+    0.25476655971535495,
+    0.35777283369479,
+    0.3656258363517537,
+    0.49157874337647317,
+    0.4264188077889859,
+    0.35417493378693954,
+    0.43919258474977363,
+    0.3660848124720273,
+    0.29421209926041436,
+    0.43639826623504235,
+    0.31807021531827673,
+    0.47902373661115283,
+    0.40403703865508844,
+    0.29866186545573864,
+    0.4714645900106247,
+    0.38441293523801456,
+    0.4999340441842816,
+    0.37499526578701553,
+    0.4962228625261622,
+    0.385144558450334
+  ],
+  "benchmarks": {
+    "lending_active_days": {
+      "top_decile_mean": 1.2,
+      "display": "1-2 days",
+      "action_item": "Maintain minimal borrowing activity -- fewer active lending days correlates with lower liquidation risk"
+    },
+    "borrow_repay_ratio": {
+      "top_decile_mean": 1.02,
+      "display": "~1.0 (balanced)",
+      "action_item": "Keep repayments closely matched to borrows for a ratio near 1.0"
+    },
+    "repay_count": {
+      "top_decile_mean": 2.1,
+      "display": "1-3 repayments",
+      "action_item": "A modest number of successful repayments demonstrates reliability without overexposure"
+    },
+    "unique_borrow_tokens": {
+      "top_decile_mean": 1.1,
+      "display": "1 token",
+      "action_item": "Focus borrowing on a single asset type to demonstrate disciplined strategy"
+    },
+    "current_total_usd": {
+      "top_decile_mean": 3.85,
+      "display": "Under $10",
+      "action_item": "Smaller on-chain portfolios carry lower liquidation exposure in the model"
+    },
+    "stablecoin_ratio": {
+      "top_decile_mean": 0.72,
+      "display": "~72% stablecoins",
+      "action_item": "Allocate a majority of your portfolio to stablecoins for risk reduction"
+    },
+    "crosschain_total_tx_count": {
+      "top_decile_mean": 4.3,
+      "display": "0-5 transactions",
+      "action_item": "Focused activity on Arbitrum signals lower liquidation risk"
+    },
+    "crosschain_dex_trade_count": {
+      "top_decile_mean": 1.8,
+      "display": "0-2 trades",
+      "action_item": "Limited multichain DEX trading indicates concentrated, lower-risk behavior"
+    },
+    "chains_active_on": {
+      "top_decile_mean": 0.15,
+      "display": "Arbitrum Native (0 external chains)",
+      "action_item": "Focused activity on Arbitrum signals disciplined portfolio management"
+    },
+    "has_used_bridge": {
+      "top_decile_mean": 0.52,
+      "display": "52% have used bridges",
+      "action_item": "Bridge experience provides a small positive signal but is not required for a high score"
+    }
+  }
+}
