@@ -1,0 +1,557 @@
+{
+  "0xa6292d924098f50eaa14f0bed07a9eef2ac82f91": {
+    "label": "Active Arbitrum lending borrower",
+    "features": {
+      "lending_active_days": 7,
+      "borrow_repay_ratio": 1.4,
+      "repay_count": 14,
+      "unique_borrow_tokens": 1,
+      "current_total_usd": 2.29,
+      "stablecoin_ratio": 0.069,
+      "net_flow_usd_90d": -14.37,
+      "crosschain_total_tx_count": 728,
+      "crosschain_dex_trade_count": 7,
+      "chains_active_on": 4,
+      "has_used_bridge": 1
+    },
+    "cached_response": {
+      "address": "0xa6292d924098f50eaa14f0bed07a9eef2ac82f91",
+      "credit_score": 44,
+      "raw_model_score": 44,
+      "chains_used": 5,
+      "data_completeness": "5-chain history",
+      "data_source": "cached",
+      "activity_tier": "full_history",
+      "activity_note": null,
+      "factor_breakdown": [
+        {
+          "feature": "lending_active_days",
+          "display_name": "Borrowing protocol activity (days)",
+          "bin": "[5, 14]",
+          "coefficient": -1.0535916207742095,
+          "is_reference": false
+        },
+        {
+          "feature": "borrow_repay_ratio",
+          "display_name": "Repayment consistency ratio",
+          "bin": "(1.1, 2.0]",
+          "coefficient": -0.5355946700415823,
+          "is_reference": false
+        },
+        {
+          "feature": "net_flow_direction",
+          "display_name": "Recent accumulation trend",
+          "bin": "0",
+          "coefficient": 0.2248935026474616,
+          "is_reference": false
+        },
+        {
+          "feature": "stablecoin_ratio",
+          "display_name": "Stablecoin allocation",
+          "bin": "(0.05, 0.5]",
+          "coefficient": -0.17247210187716547,
+          "is_reference": false
+        },
+        {
+          "feature": "has_used_bridge",
+          "display_name": "Cross-chain bridge experience",
+          "bin": "1",
+          "coefficient": 0.1439740762514153,
+          "is_reference": false
+        },
+        {
+          "feature": "chains_active_on",
+          "display_name": "Blockchain networks used",
+          "bin": "4",
+          "coefficient": 0.06744831123283092,
+          "is_reference": false
+        },
+        {
+          "feature": "crosschain_dex_trade_count",
+          "display_name": "Cross-chain DEX activity",
+          "bin": "[1, 100]",
+          "coefficient": -0.06165685985766008,
+          "is_reference": false
+        },
+        {
+          "feature": "repay_count",
+          "display_name": "Loan repayment count",
+          "bin": "[10, inf)",
+          "coefficient": 0.0421520952583896,
+          "is_reference": false
+        },
+        {
+          "feature": "crosschain_total_tx_count",
+          "display_name": "Cross-chain transaction volume",
+          "bin": "[101, 1000]",
+          "coefficient": 0.011791731047212584,
+          "is_reference": false
+        },
+        {
+          "feature": "unique_borrow_tokens",
+          "display_name": "Distinct assets borrowed",
+          "bin": "[1, 1]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "current_total_usd",
+          "display_name": "Portfolio value (USD)",
+          "bin": "[0, 10]",
+          "coefficient": 0.0,
+          "is_reference": true
+        }
+      ],
+      "composite_score": 77,
+      "collateral_ratio_bps": 9300,
+      "tx_hash": "0xb6bd5cb8517d2c6546fcb7711b1c14816cb352c8ff1d0dd4fe18c3aa0540423a",
+      "error": null,
+      "has_attestation": true,
+      "offchain_score": 87
+    }
+  },
+  "0xf7013afc2dee64b2c2225144d0ae7bcc99859c09": {
+    "label": "Liquidated borrower",
+    "features": {
+      "lending_active_days": 11,
+      "borrow_repay_ratio": 1.8,
+      "repay_count": 9,
+      "unique_borrow_tokens": 3,
+      "current_total_usd": 0.046,
+      "stablecoin_ratio": 0.0,
+      "net_flow_usd_90d": 0.0,
+      "crosschain_total_tx_count": 32,
+      "crosschain_dex_trade_count": 20,
+      "chains_active_on": 2,
+      "has_used_bridge": 1
+    },
+    "cached_response": {
+      "address": "0xf7013afc2dee64b2c2225144d0ae7bcc99859c09",
+      "credit_score": 34,
+      "raw_model_score": 34,
+      "chains_used": 3,
+      "data_completeness": "3-chain history",
+      "data_source": "cached",
+      "activity_tier": "full_history",
+      "activity_note": null,
+      "factor_breakdown": [
+        {
+          "feature": "lending_active_days",
+          "display_name": "Borrowing protocol activity (days)",
+          "bin": "[5, 14]",
+          "coefficient": -1.0535916207742095,
+          "is_reference": false
+        },
+        {
+          "feature": "borrow_repay_ratio",
+          "display_name": "Repayment consistency ratio",
+          "bin": "(1.1, 2.0]",
+          "coefficient": -0.5355946700415823,
+          "is_reference": false
+        },
+        {
+          "feature": "stablecoin_ratio",
+          "display_name": "Stablecoin allocation",
+          "bin": "[0, 0.05]",
+          "coefficient": -0.26321879042212554,
+          "is_reference": false
+        },
+        {
+          "feature": "net_flow_direction",
+          "display_name": "Recent accumulation trend",
+          "bin": "0",
+          "coefficient": 0.2248935026474616,
+          "is_reference": false
+        },
+        {
+          "feature": "has_used_bridge",
+          "display_name": "Cross-chain bridge experience",
+          "bin": "1",
+          "coefficient": 0.1439740762514153,
+          "is_reference": false
+        },
+        {
+          "feature": "crosschain_dex_trade_count",
+          "display_name": "Cross-chain DEX activity",
+          "bin": "[1, 100]",
+          "coefficient": -0.06165685985766008,
+          "is_reference": false
+        },
+        {
+          "feature": "unique_borrow_tokens",
+          "display_name": "Distinct assets borrowed",
+          "bin": "[3, inf)",
+          "coefficient": -0.05720691838333556,
+          "is_reference": false
+        },
+        {
+          "feature": "repay_count",
+          "display_name": "Loan repayment count",
+          "bin": "[4, 9]",
+          "coefficient": 0.022137834032844493,
+          "is_reference": false
+        },
+        {
+          "feature": "crosschain_total_tx_count",
+          "display_name": "Cross-chain transaction volume",
+          "bin": "[1, 100]",
+          "coefficient": 0.02100249511802698,
+          "is_reference": false
+        },
+        {
+          "feature": "chains_active_on",
+          "display_name": "Blockchain networks used",
+          "bin": "1-3",
+          "coefficient": -0.0031575196787035726,
+          "is_reference": false
+        },
+        {
+          "feature": "current_total_usd",
+          "display_name": "Portfolio value (USD)",
+          "bin": "[0, 10]",
+          "coefficient": 0.0,
+          "is_reference": true
+        }
+      ],
+      "composite_score": 17,
+      "collateral_ratio_bps": 15000,
+      "tx_hash": "0x494b6be6b3b8e39f8d1b59211ac1c8040e05f20f520f7b122e0e343b718c3dba",
+      "error": null,
+      "has_attestation": false,
+      "offchain_score": 0
+    }
+  },
+  "0x8d27f80d6a71e60759171147162c3740c0626d26": {
+    "label": "Thin-file wallet",
+    "features": {
+      "lending_active_days": 1,
+      "borrow_repay_ratio": 0.0,
+      "repay_count": 0,
+      "unique_borrow_tokens": 1,
+      "current_total_usd": 2.83,
+      "stablecoin_ratio": 0.583,
+      "net_flow_usd_90d": 0.0,
+      "crosschain_total_tx_count": 0,
+      "crosschain_dex_trade_count": 0,
+      "chains_active_on": 0,
+      "has_used_bridge": 0
+    },
+    "cached_response": {
+      "address": "0x8d27f80d6a71e60759171147162c3740c0626d26",
+      "credit_score": 76,
+      "raw_model_score": 95,
+      "chains_used": 1,
+      "data_completeness": "1-chain history",
+      "data_source": "cached",
+      "activity_tier": "thin_lending_history",
+      "activity_note": "Limited borrowing history. Score will improve with additional lending activity.",
+      "factor_breakdown": [
+        {
+          "feature": "borrow_repay_ratio",
+          "display_name": "Repayment consistency ratio",
+          "bin": "[0, 0.9]",
+          "coefficient": -0.2501549586094764,
+          "is_reference": false
+        },
+        {
+          "feature": "net_flow_direction",
+          "display_name": "Recent accumulation trend",
+          "bin": "0",
+          "coefficient": 0.2248935026474616,
+          "is_reference": false
+        },
+        {
+          "feature": "has_used_bridge",
+          "display_name": "Cross-chain bridge experience",
+          "bin": "0",
+          "coefficient": 0.1439740762514153,
+          "is_reference": false
+        },
+        {
+          "feature": "repay_count",
+          "display_name": "Loan repayment count",
+          "bin": "[0, 3]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "unique_borrow_tokens",
+          "display_name": "Distinct assets borrowed",
+          "bin": "[1, 1]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "lending_active_days",
+          "display_name": "Borrowing protocol activity (days)",
+          "bin": "[1, 1]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "current_total_usd",
+          "display_name": "Portfolio value (USD)",
+          "bin": "[0, 10]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "stablecoin_ratio",
+          "display_name": "Stablecoin allocation",
+          "bin": "(0.5, 1.0]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "crosschain_total_tx_count",
+          "display_name": "Cross-chain transaction volume",
+          "bin": "[0, 0]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "crosschain_dex_trade_count",
+          "display_name": "Cross-chain DEX activity",
+          "bin": "[0, 0]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "chains_active_on",
+          "display_name": "Blockchain networks used",
+          "bin": "0",
+          "coefficient": 0.0,
+          "is_reference": true
+        }
+      ],
+      "composite_score": 38,
+      "collateral_ratio_bps": 13200,
+      "tx_hash": "0x3c88208c6dc8c98a1996eaaeef5a276f07f69a10c4c27f76162141dac0f8fb06",
+      "error": null,
+      "has_attestation": false,
+      "offchain_score": 0
+    }
+  },
+  "0x733f9320eec2001d6222674d18feabfa7254c78f": {
+    "label": "Crosschain power user",
+    "features": {
+      "lending_active_days": 7,
+      "borrow_repay_ratio": 1.625,
+      "repay_count": 13,
+      "unique_borrow_tokens": 3,
+      "current_total_usd": 1.73,
+      "stablecoin_ratio": 0.052,
+      "net_flow_usd_90d": 0.0,
+      "crosschain_total_tx_count": 1796,
+      "crosschain_dex_trade_count": 53,
+      "chains_active_on": 4,
+      "has_used_bridge": 1
+    },
+    "cached_response": {
+      "address": "0x733f9320eec2001d6222674d18feabfa7254c78f",
+      "credit_score": 42,
+      "raw_model_score": 42,
+      "chains_used": 5,
+      "data_completeness": "5-chain history",
+      "data_source": "cached",
+      "activity_tier": "full_history",
+      "activity_note": null,
+      "factor_breakdown": [
+        {
+          "feature": "lending_active_days",
+          "display_name": "Borrowing protocol activity (days)",
+          "bin": "[5, 14]",
+          "coefficient": -1.0535916207742095,
+          "is_reference": false
+        },
+        {
+          "feature": "borrow_repay_ratio",
+          "display_name": "Repayment consistency ratio",
+          "bin": "(1.1, 2.0]",
+          "coefficient": -0.5355946700415823,
+          "is_reference": false
+        },
+        {
+          "feature": "net_flow_direction",
+          "display_name": "Recent accumulation trend",
+          "bin": "0",
+          "coefficient": 0.2248935026474616,
+          "is_reference": false
+        },
+        {
+          "feature": "stablecoin_ratio",
+          "display_name": "Stablecoin allocation",
+          "bin": "(0.05, 0.5]",
+          "coefficient": -0.17247210187716547,
+          "is_reference": false
+        },
+        {
+          "feature": "has_used_bridge",
+          "display_name": "Cross-chain bridge experience",
+          "bin": "1",
+          "coefficient": 0.1439740762514153,
+          "is_reference": false
+        },
+        {
+          "feature": "chains_active_on",
+          "display_name": "Blockchain networks used",
+          "bin": "4",
+          "coefficient": 0.06744831123283092,
+          "is_reference": false
+        },
+        {
+          "feature": "crosschain_dex_trade_count",
+          "display_name": "Cross-chain DEX activity",
+          "bin": "[1, 100]",
+          "coefficient": -0.06165685985766008,
+          "is_reference": false
+        },
+        {
+          "feature": "unique_borrow_tokens",
+          "display_name": "Distinct assets borrowed",
+          "bin": "[3, inf)",
+          "coefficient": -0.05720691838333556,
+          "is_reference": false
+        },
+        {
+          "feature": "repay_count",
+          "display_name": "Loan repayment count",
+          "bin": "[10, inf)",
+          "coefficient": 0.0421520952583896,
+          "is_reference": false
+        },
+        {
+          "feature": "crosschain_total_tx_count",
+          "display_name": "Cross-chain transaction volume",
+          "bin": "[1001, inf)",
+          "coefficient": 0.029763612501870793,
+          "is_reference": false
+        },
+        {
+          "feature": "current_total_usd",
+          "display_name": "Portfolio value (USD)",
+          "bin": "[0, 10]",
+          "coefficient": 0.0,
+          "is_reference": true
+        }
+      ],
+      "composite_score": 21,
+      "collateral_ratio_bps": 14900,
+      "tx_hash": "0x1ee69050225a15deacbc61d163cae95a58befa76e41778110061ec5d2af0c883",
+      "error": null,
+      "has_attestation": false,
+      "offchain_score": 0
+    }
+  },
+  "0xcd0325be391d5c095735d0beae4abbea9498e0ea": {
+    "label": "Strong lending history",
+    "features": {
+      "lending_active_days": 26,
+      "borrow_repay_ratio": 1.053,
+      "repay_count": 20,
+      "unique_borrow_tokens": 5,
+      "current_total_usd": 0.003,
+      "stablecoin_ratio": 0.0,
+      "net_flow_usd_90d": 0.0,
+      "crosschain_total_tx_count": 0,
+      "crosschain_dex_trade_count": 0,
+      "chains_active_on": 0,
+      "has_used_bridge": 0
+    },
+    "cached_response": {
+      "address": "0xcd0325be391d5c095735d0beae4abbea9498e0ea",
+      "credit_score": 35,
+      "raw_model_score": 35,
+      "chains_used": 1,
+      "data_completeness": "1-chain history",
+      "data_source": "cached",
+      "activity_tier": "full_history",
+      "activity_note": null,
+      "factor_breakdown": [
+        {
+          "feature": "lending_active_days",
+          "display_name": "Borrowing protocol activity (days)",
+          "bin": "[15, inf)",
+          "coefficient": -1.2259576627641224,
+          "is_reference": false
+        },
+        {
+          "feature": "stablecoin_ratio",
+          "display_name": "Stablecoin allocation",
+          "bin": "[0, 0.05]",
+          "coefficient": -0.26321879042212554,
+          "is_reference": false
+        },
+        {
+          "feature": "net_flow_direction",
+          "display_name": "Recent accumulation trend",
+          "bin": "0",
+          "coefficient": 0.2248935026474616,
+          "is_reference": false
+        },
+        {
+          "feature": "has_used_bridge",
+          "display_name": "Cross-chain bridge experience",
+          "bin": "0",
+          "coefficient": 0.1439740762514153,
+          "is_reference": false
+        },
+        {
+          "feature": "unique_borrow_tokens",
+          "display_name": "Distinct assets borrowed",
+          "bin": "[3, inf)",
+          "coefficient": -0.05720691838333556,
+          "is_reference": false
+        },
+        {
+          "feature": "repay_count",
+          "display_name": "Loan repayment count",
+          "bin": "[10, inf)",
+          "coefficient": 0.0421520952583896,
+          "is_reference": false
+        },
+        {
+          "feature": "borrow_repay_ratio",
+          "display_name": "Repayment consistency ratio",
+          "bin": "(0.9, 1.1]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "current_total_usd",
+          "display_name": "Portfolio value (USD)",
+          "bin": "[0, 10]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "crosschain_total_tx_count",
+          "display_name": "Cross-chain transaction volume",
+          "bin": "[0, 0]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "crosschain_dex_trade_count",
+          "display_name": "Cross-chain DEX activity",
+          "bin": "[0, 0]",
+          "coefficient": 0.0,
+          "is_reference": true
+        },
+        {
+          "feature": "chains_active_on",
+          "display_name": "Blockchain networks used",
+          "bin": "0",
+          "coefficient": 0.0,
+          "is_reference": true
+        }
+      ],
+      "composite_score": 17,
+      "collateral_ratio_bps": 15000,
+      "tx_hash": "0x93e95834915727e53e72b02a77d4b6837ff6748454798a89a9a08f561e9d8967",
+      "error": null,
+      "has_attestation": false,
+      "offchain_score": 0
+    }
+  }
+}
