@@ -1,0 +1,27 @@
+Arbora Protocol — Arbitrum Sepolia contract addresses (chain id 421614)
+=========================================================================
+
+Deployed: 2026-09-25 via `script/Deploy.s.sol`
+Redeployed: 2026-09-26 — LendingPool swapped to real Paxos USDG via
+            `script/DeployUsdgPool.s.sol` (registry/oracle untouched, so all
+            scores and attestations carry over).
+Deployer / admin: 0xd25f8736c3efc19a7cb7a3d15f2af22c2980e317
+Deploy tx records: contracts/broadcast/Deploy.s.sol/421614/run-latest.json
+                   contracts/broadcast/DeployUsdgPool.s.sol/421614/run-latest.json
+
+OffchainAttestationRegistry: 0x812a283c68F76E169B1DbdBe23434Bc47f11a897
+CreditOracle:                0x93Fb575277eb28f5C0b3987aC233534cF8d11E8A
+LendingPool:                 0xf3b1381013f6475b659b9468163ff23935dd3351
+USDG (Paxos, Arbitrum Sepolia): 0xFFC95faa3d63Cde504a05B567C600B78C0b41892
+AdminPriceOracle:            0xad4b47A38167FBA59CD2b4F63Bdb29090b4EAB22
+
+Explorer (LendingPool): https://sepolia.arbiscan.io/address/0xf3b1381013f6475b659b9468163ff23935dd3351
+
+Retired 2026-09-26 (mock-USDG era, superseded by the pool above):
+LendingPool:                 0xF1bF218Fcc97E02B1728CCF0B6E6c6275ab14F32
+MockUSDG:                    0x12425654B2CA404F7782dAE42c32C8566DBa4598
+
+Robinhood Chain (Arbitrum Orbit, mainnet 4663 / testnet 46630) uses the same
+deployment commands — point --rpc-url at the Robinhood RPC and use the real
+USDG address (Ethereum mainnet USDG: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D;
+Robinhood Chain USDG: 0x5fc5360d0400a0fd4f2af552add042d716f1d168) instead of MockUSDG.
