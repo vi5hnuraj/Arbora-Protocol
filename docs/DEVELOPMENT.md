@@ -83,11 +83,11 @@ AI analyzed distributions across 115,687 wallets, proposed bin edges for each fe
 
 **Engineer decision**: Drop 7 additional features where any non-reference bin showed a coefficient > +0.10. Kept `crosschain_total_tx_count` and `chains_active_on` despite small positive flips (<0.10) — dropping all cross-chain features would weaken the protocol's differentiation thesis.
 
-### Iteration 4 — Final 10-Feature Scorecard
+### Iteration 4 — Final 11-Feature Scorecard
 
 AI retrained. Post-training: discovered `wallet_age_days` had become non-monotonic after correlated features were removed. AI presented three options (drop, keep with caveats, simplify to 2 bins). Engineer chose to drop it.
 
-**Final model**: 10 features · 24 one-hot columns · AUC **0.8182** · 0 serious sign flags. Every coefficient explainable in one sentence. **Model frozen**.
+**Final model**: 11 features · 24 one-hot columns · AUC **0.8182** · 0 serious sign flags. Every coefficient explainable in one sentence. **Model frozen**.
 
 **Post-freeze engineer decision**: Specified user-facing display names for all features (e.g., `lending_active_days` → "Borrowing protocol activity (days)") to eliminate DeFi terminology ambiguity in the UI and credit reports.
 
@@ -95,7 +95,7 @@ AI retrained. Post-training: discovered `wallet_age_days` had become non-monoton
 
 ## Phase 4 — Smart Contracts
 
-**AI built**: Foundry project scaffold, OpenZeppelin v5 integration, all core contracts (`OffchainAttestationRegistry`, `CreditOracle`, `LendingPool`, `AdminPriceOracle`, `MockUSDG`) with full NatSpec documentation. Complete unit, integration, and fuzz test suites. Deployed to Arbitrum Sepolia and verified on Arbiscan. Ran a demo transaction confirming composite score transitions (49 → 99) onchain.
+**AI built**: Foundry project scaffold, OpenZeppelin v5 integration, all core contracts (`OffchainAttestationRegistry`, `CreditOracle`, `LendingPool`, `AdminPriceOracle`, `MockUSDG`) with full NatSpec documentation. Complete unit, integration, and fuzz test suites. Deployed to Arbitrum Sepolia; contract sources verified (Sourcify, exact match). Ran a demo transaction confirming composite score transitions (49 → 99) onchain.
 
 **Engineer contributions**:
 - Funded the Arbitrum Sepolia deployment wallet

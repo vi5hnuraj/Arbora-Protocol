@@ -95,7 +95,7 @@ Open **http://localhost:3000**. Click any demo wallet chip for instant results, 
 
 ## Environment Variables
 
-All variables are optional. An empty `.env` runs the full demo in synthetic/cached mode.
+All variables are optional. An empty `.env` runs the full demo in synthetic/cached mode. One exception: the pay-per-score gate defaults to **on** — uncached `POST /score` calls cost 0.01 USDG unless `USDG_PAY_PER_SCORE=0` (cached demo wallets are always free).
 
 | Variable | Description |
 |---|---|
@@ -107,6 +107,8 @@ All variables are optional. An empty `.env` runs the full demo in synthetic/cach
 | `CREDIT_ORACLE_ADDRESS` | `0x93Fb...3cF8d11E8A` (pre-filled in `.env.example`) |
 | `LENDING_POOL_ADDRESS` | `0xf3b1...35dd3351` (pre-filled in `.env.example`) |
 | `USDG_TOKEN_ADDRESS` | `0xFFC9...0b41892` (pre-filled in `.env.example`) |
+| `USDG_PAY_PER_SCORE` | `1` (default) = uncached `/score` queries cost 0.01 USDG (x402-style 402 → onchain `Transfer` verification + replay guard). Set `0` to disable the gate for local dev. |
+| `USDG_TREASURY` | Treasury receiving pay-per-score payments. Defaults to the EIP-55-checksummed deployer `0xD25F8736C3Efc19a7cb7A3D15f2aF22c2980E317`. |
 
 ---
 

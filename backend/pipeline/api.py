@@ -25,8 +25,8 @@ demo mode: scores are computed locally and `composite_score`/`tx_hash`
 come back as null.
 
 SSE events emitted by /score/stream (names are part of the frontend
-contract and unchanged): start, arbitrum_start, arbitrum_done, crosschain_start,
-crosschain_done, queries_complete, fallback, model_start, model_done,
+contract and unchanged): start, arbitrum_start, arbitrum_done,
+crosschain_start, crosschain_done, queries_complete, fallback, model_start, model_done,
 push_start, push_done, result, error.
 
 Usage:
@@ -57,6 +57,7 @@ sys.path.insert(0, str(_backend_dir))
 from pipeline.activity_tier import classify_activity_tier
 from pipeline.config import ALLIUM_API_KEY, CREDIT_ORACLE_ADDRESS
 from pipeline.data_sources import FeatureResult, cached_response, fetch_features
+from pipeline import payment_gate
 from pipeline.onchain import (
     format_error,
     push_onchain_score,
@@ -119,6 +120,14 @@ def _check_rate_limit(client_ip: str):
 
 class ScoreRequest(BaseModel):
     address: str = Field(..., description="Wallet address (0x hex string)")
+    payment_tx: str | None = Field(
+        default=None,
+        description="0.01 USDG transfer tx hash paying for this (uncached) query",
+    )
+    payer: str | None = Field(
+        default=None,
+        description="Wallet address that sent payment_tx (checked against the transfer log)",
+    )
 
 
 class FactorItem(BaseModel):
@@ -281,6 +290,12 @@ async def score_endpoint(req: ScoreRequest, request: Request):
         print("  [CACHE HIT] Returning pre-computed response instantly")
         return ScoreResponse(**precomputed)
 
+    # Pay-per-score (x402-style): uncached queries cost 0.01 USDG onchain
+    blocked = payment_gate.require_json_response(req.payment_tx, req.payer)
+    if blocked is not None:
+        print("  [402] Payment required for uncached query")
+        return blocked
+
     # Step 1: Get features (tiered: live → cached → synthetic)
     t0 = time.time()
     features = fetch_features(address)
@@ -310,6 +325,9 @@ async def score_endpoint(req: ScoreRequest, request: Request):
     t_push = time.time() - t2
     t_total = time.time() - t0
     print(f"  Total time: {t_total:.1f}s (data={t_query:.1f}s, model={t_model*1000:.0f}ms, push={t_push:.1f}s)")
+
+    # Payment consumed only after a successful run (failed runs stay retryable)
+    payment_gate.mark_used(req.payment_tx)
 
     # Build response — no Allium details, SQL, or API keys exposed
     return _build_response(
@@ -382,6 +400,12 @@ async def score_stream(req: ScoreRequest, request: Request):
             yield _sse_event({"event": "result", "data": precomputed})
 
         return StreamingResponse(cached_gen(), media_type="text/event-stream")
+
+    # Pay-per-score (x402-style): uncached queries cost 0.01 USDG onchain
+    blocked = payment_gate.require_json_response(req.payment_tx, req.payer)
+    if blocked is not None:
+        print("  [402] Payment required for uncached query")
+        return blocked
 
     client_ip = request.client.host if request.client else "unknown"
     try:
@@ -467,7 +491,8 @@ async def score_stream(req: ScoreRequest, request: Request):
             else:
                 yield _sse_event({"event": "push_done", "tx_hash": push.tx_hash})
 
-        # Final result
+        # Final result — consume the payment only now (success-gated charging)
+        payment_gate.mark_used(req.payment_tx)
         response = _build_response(
             address,
             features,

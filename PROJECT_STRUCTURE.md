@@ -36,6 +36,7 @@ Arbora/
 ├── backend/                   # Python credit scoring engine, models, and analytics
 │   ├── pipeline/              # Real-time scoring API & multi-chain ingestion
 │   │   ├── api.py             # FastAPI server with SSE streaming (/score/stream)
+│   │   ├── payment_gate.py    # x402 pay-per-score: 402 terms, USDG Transfer verification, replay guard
 │   │   ├── config.py          # Backend environment, RPCs, and addresses
 │   │   ├── data_sources.py    # 5-chain data fetchers (Etherscan, Blockscout, RPC)
 │   │   ├── scoring_queries.py # Feature extraction & transformation logic

@@ -26,7 +26,7 @@
                                                  │               └──────────────────┘   └──────────────────┘
             ┌──────────────────┐      ┌──────────▼───────────┐
             │  Logistic Regr.  │      │  OffchainAttestation │◀────── admin sets FICO attestation (MetaMask tx)
-            │  10 features     │      │  Registry            │
+            │  11 features     │      │  Registry            │
             │  24 one-hot cols │      │  ├ FICO attestations │
             │  AUC 0.8182      │      │  ├ identity hash     │
             │  (frozen)        │      │  └ Sybil resistance  │
@@ -44,7 +44,7 @@
 
 **Data flows**:
 1. Allium SQL warehouse returns raw lending + cross-chain data from 5 chains (Tier 0 — live only when `ALLIUM_API_KEY` is set; fallback to cached or synthetic)
-2. Scoring pipeline runs two concurrent SQL queries → extracts 10 features → frozen model inference → pushes score to `CreditOracle` via EIP-1559
+2. Scoring pipeline runs two concurrent SQL queries → extracts 11 features → frozen model inference → pushes score to `CreditOracle` via EIP-1559
 3. `CreditOracle` reads attestation state from `OffchainAttestationRegistry` → computes composite score on-read
 4. `LendingPool` calls `CreditOracle` to determine each borrower's collateral requirement
 5. Frontend reads composite scores and collateral ratios from contracts; renders factor breakdown from the API response
@@ -81,8 +81,9 @@ Each continuous feature is binned into 3–5 discrete risk tiers. The lowest-ris
 | Multichain transaction volume | Cross-chain | `<chain>.raw.transactions` |
 | Multichain DEX activity | Cross-chain | `crosschain.dex.trades` |
 | Blockchain networks used | Cross-chain | `crosschain.bridges.transfers` |
+| Cross-chain bridge experience | Cross-chain | `crosschain.bridges.transfers` |
 
-**Result**: 24 binary one-hot columns from 10 raw features → L2-regularized logistic regression (C=1.0, balanced class weights, 5-fold stratified CV) → P(not liquidated) → scaled to 0–100 integer score.
+**Result**: 24 binary one-hot columns from 11 raw features → L2-regularized logistic regression (C=1.0, balanced class weights, 5-fold stratified CV) → P(not liquidated) → scaled to 0–100 integer score.
 
 **Model frozen**: 2026-04-16. Will not be retrained.
 
@@ -196,6 +197,22 @@ FastAPI microservice (`backend/pipeline/`) exposing three endpoints:
 | `POST /score` | Score wallet, optionally push to oracle, return JSON |
 | `POST /score/stream` | Same — returns Server-Sent Events progress stream |
 | `GET /health` | Status: model loaded, Allium configured, oracle configured |
+
+### Pay-per-Score Gate (x402-style)
+
+Uncached scoring is metered at **0.01 USDG** (`backend/pipeline/payment_gate.py`):
+
+```
+Client ── POST /score ─────────────────────────────→ 402 Payment Required
+         ← { pay_to, price_atomic: 10000, asset: "USDG" }
+Client ── USDG.transfer(pay_to, 10000) → payment_tx ─→ POST /score + payment_tx
+         verify onchain: tx exists, from = payer, to = treasury, value ≥ 10000
+         → score → tx marked used (one-time, replay-guarded) → 200
+```
+
+- Checked **after** the cache lookup: cached demo-wallet queries return before any payment — demo chips stay free.
+- `GET /health` is never gated.
+- Disable with `USDG_PAY_PER_SCORE=0` (local dev / keyless demos); treasury via `USDG_TREASURY`.
 
 ### Three-Tier Data Sourcing
 

@@ -60,10 +60,10 @@ Layer 1: ML Scorecard          Layer 2: Smart Contracts        Layer 3: Scoring 
 ─────────────────────          ────────────────────────        ─────────────────────────      ──────────────
 Logistic Regression            OffchainAttestationRegistry     FastAPI + Allium SQL            React 19 + Vite
 115,687 DeFi borrowers    ──▶  CreditOracle (composite)   ◀── EIP-1559 score push             ethers v6
-10 features / AUC 0.8182       LendingPool (USDG/ETH)          Three-tier data sourcing        Web3Modal
+11 features / AUC 0.8182       LendingPool (USDG/ETH)          Three-tier data sourcing        Web3Modal
 ```
 
-**Layer 1 — Credit Scorecard** (`backend/model/`): FICO-style logistic regression, frozen at AUC 0.8182. 10 raw features → 24 one-hot columns → 0–100 score. Ships as `model.pkl`.
+**Layer 1 — Credit Scorecard** (`backend/model/`): FICO-style logistic regression, frozen at AUC 0.8182. 11 raw features → 24 one-hot columns → 0–100 score. Ships as `model.pkl`.
 
 **Layer 2 — Smart Contracts** (`contracts/`): Three contracts on Arbitrum Sepolia (Foundry, OpenZeppelin v5, solc 0.8.24, 200 optimizer runs). 122 Foundry tests, 6 suites, 0 failures.
 
@@ -101,6 +101,7 @@ Each continuous feature is binned into 3–5 discrete risk tiers. The lowest-ris
 | Distinct assets borrowed | Lending behavior | Borrowing across many token types increases complexity and liquidation surface. |
 | Portfolio value (USD) | Financial profile | Larger portfolios buffer against liquidation. |
 | Stablecoin allocation | Financial profile | Higher stablecoin ratio = conservative positioning = lower volatility exposure. |
+| Recent accumulation trend | Financial profile | Positive 90-day net flow = accumulation phase = healthier balance sheet. |
 | Cross-chain transaction volume | Cross-chain | Broad DeFi activity signals an established, experienced participant. |
 | Cross-chain DEX activity | Cross-chain | Multi-chain DEX usage indicates DeFi sophistication. |
 | Blockchain networks used | Cross-chain | Number of non-Arbitrum EVM chains with recorded activity. |
@@ -113,7 +114,7 @@ Each continuous feature is binned into 3–5 discrete risk tiers. The lowest-ris
 | **1** | L2 logit with raw continuous features | AUC 0.81; multicollinearity inflated coefficient variance |
 | **2** | FICO scorecard conversion (all features binned) | AUC 0.845; 25 sign flags (economically contradictory coefficient directions) |
 | **3** | Dropped `total_lending_volume`; collapsed zero-repayment-ratio bin | Reduced sign flags; some remained |
-| **4** | Dropped 7 correlated features (wallet age, high-frequency noise, etc.) | AUC **0.8182**; 10 features; **0 serious sign flags** |
+| **4** | Dropped 7 correlated features (wallet age, high-frequency noise, etc.) | AUC **0.8182**; 11 features; **0 serious sign flags** |
 
 ### Top 5 Coefficients (Final Model)
 

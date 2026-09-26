@@ -90,6 +90,22 @@ export default function AttestationSimulator({
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null); // { type: 'success'|'error', message }
 
+  // Wallet signature: the attester signs the exact payload
+  // with personal_sign before it can be published. `signedIssued` is the
+  // timestamp embedded in the signed message; any form change invalidates it.
+  const [signature, setSignature] = useState(null);
+  const [signedMessage, setSignedMessage] = useState(null);
+  const [signedIssued, setSignedIssued] = useState(null);
+  const [attester, setAttester] = useState(null);
+  const [signing, setSigning] = useState(false);
+
+  // Receipt verifier: paste an exported receipt → re-check format,
+  // signature recovery, identity-hash derivation, and (when possible) the
+  // onchain record for the subject wallet.
+  const [receiptInput, setReceiptInput] = useState('');
+  const [receiptResult, setReceiptResult] = useState(null); // { ok, lines[] }
+  const [verifyingReceipt, setVerifyingReceipt] = useState(false);
+
   // On-chain attestation record (OffchainAttestationRegistry ABI)
   const [record, setRecord] = useState({ key: null, data: null });
   const [reload, setReload] = useState(0);
@@ -138,6 +154,181 @@ export default function AttestationSimulator({
 
   const writesLocked = !canWrite || !walletAddress;
 
+  // Canonical, human-readable attestation message. Same form fields feed the
+  // signature and the onchain struct, so a signed message always describes
+  // exactly what is published.
+  function buildMessage(issued) {
+    return [
+      'Arbora Protocol — Offchain Credit Attestation',
+      'chain: Arbitrum Sepolia (421614)',
+      `registry: ${registry?.target ?? 'unconfigured'}`,
+      `subject wallet: ${walletAddress ?? '—'}`,
+      `identity label: ${identityLabel}`,
+      `identity hash: ${identityHash}`,
+      `fico score: ${compositeScore} / 850`,
+      `payment history: ${paymentHistory} / 100`,
+      `credit utilization: ${creditUtil}%`,
+      `credit history: ${historyMonths} months`,
+      `accounts: ${numAccounts}`,
+      `hard inquiries: ${hardInquiries}`,
+      `issued: ${issued}`,
+    ].join('\n');
+  }
+
+  const currentIssued = signedIssued;
+  const isSigned =
+    Boolean(signature && signedMessage && signedIssued) &&
+    signedMessage === buildMessage(currentIssued);
+  const signatureStale = Boolean(signature) && !isSigned;
+
+  async function handleSign() {
+    if (!registry || !walletAddress || !canWrite) return;
+    setSigning(true);
+    setFeedback(null);
+    try {
+      const issued = new Date().toISOString();
+      const message = buildMessage(issued);
+      const attester = await registry.runner.getAddress();
+      const sig = await registry.runner.signMessage(message);
+      const recovered = ethers.verifyMessage(message, sig);
+      if (recovered.toLowerCase() !== attester.toLowerCase()) {
+        throw new Error('Signature recovery mismatch');
+      }
+      setSignature(sig);
+      setSignedMessage(message);
+      setSignedIssued(issued);
+      setAttester(attester);
+      setFeedback({ type: 'success', message: `Signature verified ✓ — signed by ${attester.slice(0, 6)}…${attester.slice(-4)}` });
+    } catch (err) {
+      setFeedback({ type: 'error', message: txError(err, 'Signing failed') });
+    } finally {
+      setSigning(false);
+    }
+  }
+
+  function handleExportReceipt() {
+    if (!signature || !signedMessage) return;
+    const receipt = {
+      format: 'arbora-attestation-receipt',
+      version: 1,
+      algorithm: 'EIP-191 personal_sign (keccak256 identity hash)',
+      chain: { name: 'Arbitrum Sepolia', chainId: 421614 },
+      registry: registry?.target ?? null,
+      subject: walletAddress,
+      attester: null,
+      attestation: {
+        identityLabel,
+        identityHash,
+        ficoScore: compositeScore,
+        paymentHistoryScore: paymentHistory,
+        creditUtilizationPct: creditUtil,
+        creditHistoryMonths: historyMonths,
+        numberOfAccounts: numAccounts,
+        hardInquiries,
+      },
+      message: signedMessage,
+      signature,
+      issued: signedIssued,
+    };
+    ethers
+      .verifyMessage(signedMessage, signature)
+      .then((recovered) => {
+        receipt.attester = recovered;
+        const blob = new Blob([JSON.stringify(receipt, null, 2)], {
+          type: 'application/json',
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `arbora-attestation-${(walletAddress ?? 'wallet').slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      })
+      .catch(() => {});
+  }
+
+  async function handleVerifyReceipt() {
+    setVerifyingReceipt(true);
+    setReceiptResult(null);
+    const lines = [];
+    try {
+      const r = JSON.parse(receiptInput);
+      const okFormat = r.format === 'arbora-attestation-receipt';
+      lines.push({
+        label: 'Receipt format',
+        ok: okFormat,
+        text: okFormat ? `arbora-attestation-receipt v${r.version ?? '?'}` : `unexpected: ${r.format}`,
+      });
+      if (!okFormat) throw new Error('not an arbora receipt');
+
+      let recovered = null;
+      try {
+        recovered = ethers.verifyMessage(r.message, r.signature);
+      } catch {
+        recovered = null;
+      }
+      const sigOk = Boolean(recovered) && recovered.toLowerCase() === String(r.attester).toLowerCase();
+      lines.push({
+        label: 'Signature (ecrecover)',
+        ok: sigOk,
+        text: sigOk ? `recovers to ${recovered.slice(0, 10)}…${recovered.slice(-6)}` : 'recovery failed or attester mismatch',
+      });
+
+      const recomputed = ethers.keccak256(ethers.toUtf8Bytes(r.attestation?.identityLabel ?? ''));
+      const hashInMsg = typeof r.message === 'string' && r.message.includes(`identity hash: ${recomputed}`);
+      lines.push({
+        label: 'Identity hash derivation',
+        ok: hashInMsg,
+        text: hashInMsg ? `keccak256(label) matches message ✓` : 'message does not embed keccak256(label)',
+      });
+
+      const subjectInMsg =
+        typeof r.message === 'string' && r.subject &&
+        r.message.includes(`subject wallet: ${r.subject}`);
+      lines.push({
+        label: 'Subject wallet bound',
+        ok: Boolean(subjectInMsg),
+        text: subjectInMsg ? r.subject : 'subject not found in signed message',
+      });
+
+      // Onchain cross-check when the registry is configured
+      if (readRegistry && r.subject) {
+        try {
+          const has = toBool(await readRegistry.hasAttestation(r.subject));
+          if (has) {
+            const att = structAt(await readRegistry.getAttestation(r.subject));
+            const chainFico = att ? toNum(att.ficoScore) : null;
+            const match = chainFico !== null && chainFico === r.attestation?.ficoScore;
+            lines.push({
+              label: 'Onchain record',
+              ok: match,
+              text: match
+                ? `FICO ${chainFico} matches receipt ✓`
+                : `onchain FICO ${chainFico ?? '--'} ≠ receipt ${r.attestation?.ficoScore ?? '--'}`,
+            });
+          } else {
+            lines.push({
+              label: 'Onchain record',
+              ok: false,
+              text: 'subject has no onchain attestation',
+            });
+          }
+        } catch {
+          lines.push({ label: 'Onchain record', ok: false, text: 'registry read failed' });
+        }
+      }
+
+      setReceiptResult({ ok: lines.every((l) => l.ok), lines });
+    } catch (err) {
+      setReceiptResult({
+        ok: false,
+        lines: [...lines, { label: 'Parse', ok: false, text: err.message || 'invalid JSON' }],
+      });
+    } finally {
+      setVerifyingReceipt(false);
+    }
+  }
+
   async function handleClear() {
     if (!registry || !walletAddress) return;
     if (!canWrite) {
@@ -151,6 +342,10 @@ export default function AttestationSimulator({
       setFeedback({ type: 'pending', message: `Clearing: ${shortHash(tx.hash)}` });
       await tx.wait();
       setFeedback({ type: 'success', message: 'Attestation cleared' });
+      setSignature(null);
+      setSignedMessage(null);
+      setSignedIssued(null);
+      setAttester(null);
       setReload((n) => n + 1);
       onAttestationSubmitted?.();
     } catch (err) {
@@ -164,6 +359,15 @@ export default function AttestationSimulator({
     if (!registry || !walletAddress) return;
     if (!canWrite) {
       setFeedback({ type: 'error', message: blockedReason || 'Writes are disabled' });
+      return;
+    }
+    if (!isSigned) {
+      setFeedback({
+        type: 'error',
+        message: signatureStale
+          ? 'Form changed after signing — sign the attestation again'
+          : 'Sign the attestation first (Step 1)',
+      });
       return;
     }
     setLoading(true);
@@ -223,7 +427,8 @@ export default function AttestationSimulator({
           Offchain credit, published onchain.
         </h3>
         <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-2">
-          Simulates ZKredit — in production these come from ZK proofs.
+          Every attestation is wallet-signed before it is published — in
+          production a ZK verifier would check the same payload.
         </p>
       </div>
 
@@ -385,14 +590,110 @@ export default function AttestationSimulator({
             </p>
           </div>
 
-          {/* Submit */}
+          {/* Step 1 — wallet signature */}
+          <div className="space-y-3">
+            <div className="rule" />
+            <div>
+              <p className="kicker">Step 1 — Wallet signature</p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-ink-2">
+                The attester signs the exact payload in MetaMask before anything
+                is published — the receipt below proves who approved these values.
+              </p>
+            </div>
+
+            <button
+              onClick={handleSign}
+              disabled={signing || writesLocked}
+              className={`btn-secondary w-full !h-10 !text-[13px] ${signing ? 'cursor-wait opacity-60' : ''}`}
+            >
+              {signing
+                ? 'Waiting for signature…'
+                : signature && !signatureStale
+                ? 'Re-sign attestation'
+                : 'Sign attestation (MetaMask)'}
+            </button>
+
+            {signature && (
+              <div className="space-y-2 rounded-[10px] border border-positive/30 bg-positive/5 px-3.5 py-2.5">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="kicker text-[10px]">Signature</span>
+                  <span className="chip chip-accent">
+                    {isSigned ? '✓ verified' : 're-sign required'}
+                  </span>
+                </div>
+                <RecordRow
+                  label="Attester"
+                  value={attester ? `${attester.slice(0, 10)}…${attester.slice(-6)}` : '—'}
+                />
+                <p className="break-all font-mono text-[10px] leading-relaxed text-ink-3">
+                  {signature}
+                </p>
+                <p className="font-mono text-[10px] text-ink-3">
+                  ecrecover: {isSigned ? 'matches signer ✓' : 'stale — form changed'}
+                </p>
+                <button
+                  onClick={handleExportReceipt}
+                  className="w-full rounded-[8px] border border-line bg-surface-2 py-1.5 font-mono text-[11px] text-ink-2 hover:text-ink"
+                >
+                  Export signed receipt (JSON)
+                </button>
+              </div>
+            )}
+
+            {/* Receipt verifier */}
+            <div className="space-y-2 rounded-[10px] border border-line bg-surface-2 px-3.5 py-2.5">
+              <span className="kicker text-[10px]">Verify an exported receipt</span>
+              <textarea
+                value={receiptInput}
+                onChange={(e) => setReceiptInput(e.target.value)}
+                rows={3}
+                placeholder='{"format":"arbora-attestation-receipt", …}'
+                className="field !h-auto !resize-none !px-2.5 !py-2 !text-[10px] font-mono"
+              />
+              <button
+                onClick={handleVerifyReceipt}
+                disabled={verifyingReceipt || !receiptInput.trim()}
+                className="w-full rounded-[8px] border border-line bg-surface px-3 py-1.5 font-mono text-[11px] text-ink-2 hover:text-ink disabled:opacity-50"
+              >
+                {verifyingReceipt ? 'Verifying…' : 'Verify receipt'}
+              </button>
+              {receiptResult && (
+                <div className="space-y-1">
+                  <span className={`chip ${receiptResult.ok ? 'chip-accent' : 'chip-negative'}`}>
+                    {receiptResult.ok ? '✓ receipt verified' : '✗ verification failed'}
+                  </span>
+                  {receiptResult.lines.map((l) => (
+                    <p
+                      key={l.label}
+                      className={`break-all font-mono text-[10px] leading-relaxed ${
+                        l.ok ? 'text-positive' : 'text-negative'
+                      }`}
+                    >
+                      {l.ok ? '✓' : '✗'} {l.label}: {l.text}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Step 2 — publish */}
           <div className="space-y-2">
+            <p className="kicker">Step 2 — Publish onchain</p>
             <button
               onClick={handleSubmit}
-              disabled={loading || writesLocked}
-              className={`btn-primary w-full ${loading ? 'cursor-wait opacity-60' : ''}`}
+              disabled={loading || writesLocked || !isSigned}
+              className={`btn-primary w-full ${loading ? 'cursor-wait opacity-60' : ''} ${
+                !isSigned ? 'cursor-not-allowed opacity-40' : ''
+              }`}
             >
-              {loading ? 'Confirming…' : 'Publish attestation'}
+              {loading
+                ? 'Confirming…'
+                : !isSigned
+                ? signatureStale
+                  ? 'Sign again to publish'
+                  : 'Sign first to enable publishing'
+                : 'Publish attestation'}
             </button>
 
             <button

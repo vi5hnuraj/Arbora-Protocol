@@ -28,7 +28,7 @@ import {
   explorerTxUrl,
 } from './config/contract-addresses.js';
 import { isCorrectChain } from './lib/network-switch.js';
-import { toBool, toNum, structAt, shortHash } from './lib/ethers-helpers.js';
+import { toBool, toNum, structAt, shortHash, sendWalletTx, txError } from './lib/ethers-helpers.js';
 
 const DEMO_WALLETS = [
   { addr: '0xa6292d924098f50eaa14f0bed07a9eef2ac82f91', label: 'Active borrower', chip: 'chip-accent' },
@@ -126,7 +126,12 @@ export default function App() {
   // Progress state for the chain map (real SSE events from backend)
   const [progress, setProgress] = useState({});
 
-  const handleSearch = useCallback(async (address) => {
+  // x402-style pay-per-score: set when the backend answers HTTP 402 for an
+  // uncached wallet. `payment` carries the terms (0.01 USDG → treasury).
+  const [paymentReq, setPaymentReq] = useState(null);
+  const [paying, setPaying] = useState(false);
+
+  const handleSearch = useCallback(async (address, payment = null) => {
     setIsScoring(true);
     setScoreResult(null);
     setScoreError(null);
@@ -134,15 +139,27 @@ export default function App() {
     setCompositeData(null);
     setProgress({});
     setReportExpanded(false);
+    setPaymentReq(null);
     setRunId((n) => n + 1);
+
+    const payBody = payment
+      ? { payment_tx: payment.paymentTx, payer: payment.payer }
+      : {};
 
     try {
       // Try SSE streaming endpoint first (real-time progress)
       let resp = await fetch(`${API_BASE}/score/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address }),
+        body: JSON.stringify({ address, ...payBody }),
       });
+
+      // x402 — payment required: show the pay panel, don't score yet
+      if (resp.status === 402) {
+        const data = await resp.json().catch(() => ({}));
+        setPaymentReq({ ...data, address });
+        return;
+      }
 
       // Fallback to JSON endpoint if streaming isn't available (old backend)
       if (resp.status === 404) {
@@ -150,8 +167,13 @@ export default function App() {
         resp = await fetch(`${API_BASE}/score`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address }),
+          body: JSON.stringify({ address, ...payBody }),
         });
+        if (resp.status === 402) {
+          const data = await resp.json().catch(() => ({}));
+          setPaymentReq({ ...data, address });
+          return;
+        }
         if (!resp.ok) {
           const errData = await resp.json().catch(() => ({}));
           throw new Error(errData.detail || `HTTP ${resp.status}`);
@@ -221,6 +243,25 @@ export default function App() {
       setIsScoring(false);
     }
   }, [refreshComposite]);
+
+  // x402 pay-per-score: one 0.01 USDG transfer unlocks the uncached query,
+  // then the same search retries with the payment tx attached.
+  const handlePayAndScore = useCallback(async () => {
+    if (!paymentReq?.payment || !paymentReq?.address || !usdg || !account) return;
+    setPaying(true);
+    setScoreError(null);
+    try {
+      const p = paymentReq.payment;
+      const tx = await sendWalletTx(usdg, 'transfer', [String(p.pay_to).toLowerCase(), p.price_atomic]);
+      await tx.wait();
+      setPaymentReq(null);
+      await handleSearch(paymentReq.address, { paymentTx: tx.hash, payer: account });
+    } catch (err) {
+      setScoreError(txError(err, 'Payment failed — is your wallet on Arbitrum Sepolia with enough USDG?'));
+    } finally {
+      setPaying(false);
+    }
+  }, [paymentReq, usdg, account, handleSearch]);
 
   const handleAttestationSubmitted = useCallback(async () => {
     if (searchedAddress) {
@@ -295,6 +336,9 @@ export default function App() {
                 onSearch={handleSearch}
                 isLoading={isScoring}
                 account={account}
+                paymentReq={paymentReq}
+                onPay={handlePayAndScore}
+                paying={paying}
               />
 
               {/* Loading state: terminal-style step list */}

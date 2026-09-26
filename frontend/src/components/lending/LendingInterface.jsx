@@ -435,6 +435,14 @@ export default function LendingInterface({
           unit="USDG"
           accent
         />
+        <p
+          className="mt-2 cursor-help text-[11px] leading-relaxed text-ink-3"
+          title="Deposits are allocated to borrowers by composite score: weak scores post 150% collateral, strong scores post 75%. Every Borrowed event records the score and ratio that priced the loan, so allocation is auditable and recomputable from onchain evidence."
+        >
+          Deposited capital is allocated by borrower credit score — collateral
+          runs 150% ↔ 75% — and every loan records its pricing score + ratio in
+          the onchain <span className="font-mono">Borrowed</span> event.
+        </p>
       </div>
 
       {!readPool ? (
@@ -450,7 +458,7 @@ export default function LendingInterface({
           <div className="rounded-[10px] border border-line bg-surface-2 p-4">
             <div className="flex items-center justify-between gap-3">
               <span className="kicker">
-                {walletAddress ? 'Your position' : 'Position'}
+                {walletAddress ? 'Your credit line' : 'Credit line'}
               </span>
               {scoreRatioBps != null && (
                 <span className="font-mono text-[10px] tabular-nums text-ink-3">
@@ -469,13 +477,18 @@ export default function LendingInterface({
                 </div>
               </div>
               <div>
-                <span className="kicker block text-[10px]">Debt</span>
+                <span className="kicker block text-[10px]">Debt (drawn)</span>
                 <div className="display mt-1.5 text-[26px] leading-none tabular-nums">
                   {walletAddress ? fmtAmount(snapshot.debtUsdg, usdgDecimals, 2) : '--'}
                   <span className="ml-1.5 font-sans text-[12px] text-ink-3">USDG</span>
                 </div>
               </div>
             </div>
+
+            <p className="mt-2.5 text-[12px] leading-relaxed text-ink-3">
+              Undercollateralized revolving credit — repay to free collateral,
+              reborrow any time; every draw re-prices from your composite score.
+            </p>
 
             {/* Health + ratio chips */}
             {(hasPosition || snapshot.loanRatioBps != null) && (
@@ -494,7 +507,7 @@ export default function LendingInterface({
                 )}
                 {snapshot.loanRatioBps != null && (
                   <span className="chip chip-neutral ml-auto">
-                    Collateral ratio {(snapshot.loanRatioBps / 100).toFixed(0)}%
+                    Collateral ratio {(snapshot.loanRatioBps / 100).toFixed(0)}% · at draw
                   </span>
                 )}
               </div>
