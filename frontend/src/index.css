@@ -1,0 +1,360 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Arbora design system — near-black editorial terminal palette
+   serif display + monospace micro-labels + Inter body
+--------------------------------------------------------------------------- */
+@theme {
+  /* Surfaces */
+  --color-bg: #0a0a0b;
+  --color-surface: #101012;
+  --color-surface-2: #161618;
+  --color-line: #232327;
+  --color-line-strong: #333338;
+  --color-gauge-track: #1c1c1f;
+
+  /* Ink */
+  --color-ink: #f4f4f5;
+  --color-ink-2: #a1a1aa;
+  --color-ink-3: #71717a;
+
+  /* Signal colors */
+  --color-positive: #34d399;
+  --color-negative: #f87171;
+  --color-info: #60a5fa;
+  --color-accent: #a78bfa;
+  --color-amber: #fbbf24;
+
+  /* Semantic aliases — keep legacy utility names used by config.js tier
+     labels (getCollateralLabel) and any remaining text-danger/warning copy. */
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --color-accent-bright: #c4b5fd;
+
+  /* Type */
+  --font-display: "Instrument Serif", "Newsreader", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-line-strong);
+    outline-offset: 2px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Component classes
+--------------------------------------------------------------------------- */
+@layer components {
+  /* Monospace micro-label: uppercase, wide tracking, muted gray */
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--color-ink-3);
+  }
+
+  /* Serif display type — sentence case, tight tracking */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+
+  /* Card / panel surface */
+  .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    padding: 22px;
+  }
+
+  /* Hairline divider */
+  .rule {
+    height: 1px;
+    background-color: var(--color-line);
+    border: 0;
+  }
+
+  /* Status chips */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 5px 7px;
+    border-radius: 6px;
+    border: 1px solid var(--color-line);
+    background-color: var(--color-surface-2);
+    color: var(--color-ink-2);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  .chip-positive {
+    color: var(--color-positive);
+    background-color: color-mix(in srgb, var(--color-positive) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-positive) 32%, transparent);
+  }
+
+  .chip-negative {
+    color: var(--color-negative);
+    background-color: color-mix(in srgb, var(--color-negative) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-negative) 32%, transparent);
+  }
+
+  .chip-warning {
+    color: var(--color-amber);
+    background-color: color-mix(in srgb, var(--color-amber) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-amber) 32%, transparent);
+  }
+
+  .chip-info {
+    color: var(--color-info);
+    background-color: color-mix(in srgb, var(--color-info) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-info) 32%, transparent);
+  }
+
+  .chip-accent {
+    color: var(--color-accent);
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 32%, transparent);
+  }
+
+  .chip-neutral {
+    color: var(--color-ink-3);
+    background-color: var(--color-surface-2);
+    border-color: var(--color-line);
+  }
+
+  /* Buttons — 44px tall, comfortable padding */
+  .btn-primary,
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 22px;
+    border-radius: 12px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+      opacity 0.15s ease;
+  }
+
+  .btn-primary {
+    background-color: #fafafa;
+    color: #0a0a0b;
+    border: 1px solid #fafafa;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: #e4e4e7;
+    border-color: #e4e4e7;
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-ink);
+    border: 1px solid var(--color-line);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-surface-2);
+    border-color: var(--color-line-strong);
+  }
+
+  .btn-primary:disabled,
+  .btn-secondary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* Big serif numerals for the stats row */
+  .stat-number {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.5rem, 4vw, 3.25rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Monospace form control */
+  .field {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .field::placeholder {
+    color: var(--color-ink-3);
+  }
+
+  .field:focus {
+    border-color: var(--color-line-strong);
+  }
+
+  .field:disabled {
+    opacity: 0.5;
+  }
+
+  /* Row of mono label + value, hairline separated */
+  .data-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .data-row:last-child {
+    border-bottom: 0;
+  }
+
+  .data-row dt,
+  .data-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-ink-3);
+  }
+
+  .data-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+    text-align: right;
+    word-break: break-all;
+  }
+
+  /* Terminal-style status bar used by the banners */
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 14px;
+    padding: 8px 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-align: center;
+  }
+
+  .bar-negative {
+    background-color: #2a1a1a;
+    border-bottom: 1px solid #3d2323;
+    color: var(--color-negative);
+  }
+
+  .bar-warning {
+    background-color: #2a241a;
+    border-bottom: 1px solid #3d3423;
+    color: var(--color-amber);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Animations
+--------------------------------------------------------------------------- */
+
+/* Score gauge fill */
+@keyframes gauge-fill {
+  from {
+    stroke-dashoffset: var(--gauge-circumference);
+  }
+  to {
+    stroke-dashoffset: var(--gauge-offset);
+  }
+}
+
+.gauge-arc {
+  animation: gauge-fill 1.5s ease-out forwards;
+}
+
+/* Pulsing dot for the active scoring step */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.35);
+  }
+}
+
+.pulse-dot {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+
+/* Step completion marker pop-in */
+@keyframes check-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.check-in {
+  animation: check-in 0.3s ease-out forwards;
+}
