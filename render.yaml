@@ -1,0 +1,26 @@
+# Render Blueprint — Arbora Protocol Backend
+# Deploy via: https://render.com/deploy
+services:
+  - type: web
+    name: arbora-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/pipeline/requirements.txt
+    startCommand: uvicorn backend.pipeline.api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ALLIUM_API_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: ARBITRUM_SEPOLIA_RPC
+        value: https://sepolia-rollup.arbitrum.io/rpc
+      - key: ARBITRUM_SEPOLIA_PRIVATE_KEY
+        sync: false  # Testnet-only key, set manually
+      - key: USDG_TOKEN_ADDRESS
+        value: "0xFFC95faa3d63Cde504a05B567C600B78C0b41892"
+      - key: ETHERSCAN_API_KEY
+        sync: false
+      - key: ATTESTATION_REGISTRY_ADDRESS
+        value: "0x812a283c68F76E169B1DbdBe23434Bc47f11a897"
+      - key: CREDIT_ORACLE_ADDRESS
+        value: "0x93Fb575277eb28f5C0b3987aC233534cF8d11E8A"
+      - key: LENDING_POOL_ADDRESS
+        value: "0xf3b1381013f6475b659b9468163ff23935dd3351"
