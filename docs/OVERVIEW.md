@@ -29,7 +29,7 @@ Collateral requirements are set by a continuous piecewise-linear curve driven by
 
 ### Signal 1 — Onchain Behavioral Score
 
-A FICO-methodology logistic regression model trained on **115,687 onchain DeFi borrowers** across premier lending protocols (including Aave v3 on Arbitrum) and major EVM blockchains (Arbitrum, Ethereum, Optimism, Polygon, Base). The model uses **10 interpretable features** spanning:
+A FICO-methodology logistic regression model trained on **115,687 onchain DeFi borrowers** across premier lending protocols (including Aave v3 on Arbitrum) and major EVM blockchains (Arbitrum, Ethereum, Optimism, Polygon, Base). The model uses **11 interpretable features** spanning:
 
 - **Lending behavior**: borrowing protocol activity days, repayment consistency ratio, loan repayment count, distinct assets borrowed
 - **Financial profile**: portfolio value, stablecoin allocation, accumulation trend
@@ -83,7 +83,7 @@ Wallet Address
       ↓
 Allium SQL (5 chains, live) or cached/synthetic fallback
       ↓
-10-feature extraction → Frozen logistic regression (AUC 0.8182)
+11-feature extraction → Frozen logistic regression (AUC 0.8182)
       ↓
 Onchain credit score pushed to CreditOracle (Arbitrum Sepolia)
       ↓
@@ -104,7 +104,7 @@ The full scoring flow takes approximately 90 seconds with live data — comparab
 |---|---|
 | Smart contracts | Live on Arbitrum Sepolia (deployed 2026-09-25) |
 | Test suite | 122 Foundry tests — 6 suites — 0 failures |
-| Backend | FastAPI, zero-config demo mode |
+| Backend | FastAPI — x402 pay-per-score gate (0.01 USDG per uncached query) + zero-config demo mode |
 | Frontend | React 19 + Vite, live at arbora-protocol.vercel.app |
 
 Contract addresses are in [`deployments/ARBITRUM_SEPOLIA.address`](../deployments/ARBITRUM_SEPOLIA.address) and the root `README.md`.

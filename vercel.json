@@ -1,7 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "vite",
-  "installCommand": "if [ -d \"frontend\" ]; then cd frontend && npm install; else npm install; fi",
-  "buildCommand": "if [ -d \"frontend\" ]; then cd frontend && npm install && npm run build && cd .. && rm -rf dist && cp -r frontend/dist ./; else npm run build; fi",
-  "outputDirectory": "dist"
+  "ignore": ["backend/**", "contracts/**", "docs/**", "deployments/**"]
 }

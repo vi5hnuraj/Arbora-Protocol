@@ -28,5 +28,5 @@
 ## Hackathon
 
 - **Event**: [Arbitrum Open House Singapore: Online Buildathon](https://openhouse.arbitrum.io/)
-- **Period**: Sep 14 – Oct 4, 2026
+- **Period**: Sep 13 – Oct 4, 2026 · Submission deadline: Oct 1, 2026, 11:59 PM SGT
 - **Author**: vishnuraj — [github.com/vi5hnuraj](https://github.com/vi5hnuraj)
